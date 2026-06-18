@@ -1,43 +1,132 @@
-graph TD
-    %% Cores e Estilos
-    classDef otLayer fill:#e8f4f8,stroke:#2b7b98,stroke-width:2px;
-    classDef edgeLayer fill:#f9ede6,stroke:#b95c27,stroke-width:2px;
-    classDef itLayer fill:#eef9eb,stroke:#3b8b22,stroke-width:2px;
-    classDef db fill:#f0eeff,stroke:#5544aa,stroke-width:2px;
+Engenharia de Dados Industrial - Cozedores
 
-    subgraph Chão de Fábrica / OT Layer
-        A[Instrumentos de Campo<br>Transmissores de Variáveis]:::otLayer
-        B[Remota Siemens<br>ET 200/M IM 153-1]:::otLayer
-        C[CPU Siemens<br>S7-315-2 PN/DP]:::otLayer
+Pipeline híbrido (On-Premises + Cloud) para aquisição, processamento e análise de dados de processo de cozedores em uma usina sucroenergética.
 
-        A -- Profibus-PA --> B
-        B -- Profibus DP --> C
-        C -. Lógica Interna .-> C_DB[(Organiza Variáveis <br>DB101 a DB205)]:::db
-    end
+📊 Arquitetura do Projeto
 
-    subgraph Edge Computing Layer
-        D[Node Industrial Edge<br>Gateway / Mini PC]:::edgeLayer
-        D1([Docker: snap7_reader])
-        D2([Docker: logger])
-        D3([Docker: healthcheck])
+🧠 Visão Geral
+Este projeto implementa uma arquitetura de engenharia de dados industrial com dois objetivos principais:
 
-        C -- Profinet / Industrial Ethernet<br>S7 Protocol PUT/GET --> D
-        D --- D1
-        D --- D2
-        D --- D3
-        D1 -. Conversão Byte para .-> D1_Parse[REAL / INT / BOOL]
-    end
+Operacional (On-Premises): Suporte à tomada de decisão em tempo quase real no chão de fábrica
 
-    subgraph TI & Engenharia de Dados
-        E[(SQL Server<br>Camada RAW)]:::db
-        F[Apache Airflow<br>Orquestração de Dados]:::itLayer
-        F1(DAG: RAW to CURATED)
-        F2(DAG: CURATED to GOLD)
-        F3(DAG: Cálculos de KPIs<br>Eficiência, Pureza, Vapor)
+Estratégico (Cloud): Consolidação histórica e analítica para apoio à gestão
 
-        D1 -- TCP/IP<br>Payload Estruturado JSON/SQL --> E
-        E -- Rede Corporativa / DMZ --> F
-        F --- F1
-        F --- F2
-        F --- F3
-    end
+Os dados são coletados diretamente dos instrumentos de campo dos cozedores, processados localmente e posteriormente integrados a uma arquitetura moderna de dados em nuvem.
+
+🏭 Camada On-Premises (Operacional)
+Responsável pela aquisição, tratamento inicial e disponibilização dos dados para operação.
+
+Fluxo:
+
+Transmissores de campo (pressão, temperatura, nível)
+
+Comunicação via Profibus-PA / Profibus DP
+
+CLP Siemens S7-315-2 PN/DP
+
+Leitura via Edge Node (Docker + snap7)
+
+Persistência no SQL Server (Camada RAW)
+
+Processamento via Apache Airflow
+
+RAW → CURATED
+
+CURATED → GOLD
+
+Cálculo de KPIs (eficiência, pureza, consumo de vapor)
+
+
+Objetivo:
+
+Garantir suporte operacional à produção com dados confiáveis e estruturados.
+
+
+☁️ Camada Cloud (Estratégica)
+
+Responsável pela consolidação, historização e análise estratégica dos dados.
+
+Fluxo:
+
+Extração da camada CURATED (SQL Server)
+
+Geração de arquivos CSV particionados por dia
+
+Armazenamento intermediário em MinIO
+
+Ingestão no Azure Data Lake Storage (ADLS)
+
+Arquitetura Medallion:
+
+Bronze: Dados brutos ingeridos
+
+Silver: Dados tratados e normalizados
+
+Gold: Dados agregados e prontos para análise
+
+Consumo:
+
+Power BI
+
+Indicadores estratégicos de performance industrial
+
+
+🔄 Pipeline de Dados
+
+RAW → CURATED → CSV → MinIO → BRONZE → SILVER → GOLD
+
+
+⚙️ Tecnologias Utilizadas
+
+Siemens S7-315 (Automação Industrial)
+
+Profibus / Profinet
+
+Python (snap7)
+
+Docker
+
+SQL Server
+
+Apache Airflow
+
+MinIO
+
+Azure Data Lake Storage (ADLS)
+
+Power BI
+
+
+📁 Estrutura do Projeto
+
+├── README.md
+├── assets/
+│   ├── arquitetura_hibrida.png
+│   ├── arquitetura_onprem.png
+│   ├── arquitetura_cloud.png
+│
+├── docs/
+│   ├── arquitetura-geral.md
+│   ├── on-premises.md
+│   ├── cloud.md
+│   ├── pipelines.md
+│
+├── src/
+│   ├── snap7_reader/
+│   ├── dags/
+
+
+🚀 Roadmap
+
+Monitoramento de pipelines (observabilidade)
+
+Data Quality (validação de sensores)
+
+Integração com streaming (Kafka / MQTT)
+
+Modelos preditivos (ML para eficiência industrial)
+
+
+📌 Considerações
+
+Este projeto representa uma arquitetura híbrida moderna aplicada ao contexto industrial, integrando tecnologias de automação, edge computing e engenharia de dados em nuvem para geração de valor operacional e estratégico.
