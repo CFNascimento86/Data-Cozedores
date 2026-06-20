@@ -3,6 +3,9 @@ Pipeline híbrido (On-Premises + Cloud) para aquisição, processamento e análi
 
 ---
 
+## 📊 Arquitetura do Projeto
+![Arquiteura geral](https://github.com/CFNascimento86/Data-Cozedores/blob/main/imagens/arquitetura_hibrida.jpg)
+
 ## 📊 Visão Geral
 
 Este projeto implementa uma arquitetura de engenharia de dados industrial com dois objetivos principais:
