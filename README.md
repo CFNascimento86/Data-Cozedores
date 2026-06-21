@@ -51,7 +51,6 @@ Garantir suporte operacional à produção com dados confiáveis e estruturados.
 Responsável pela consolidação, historização e análise estratégica dos dados.
 
 **Fluxo:**
-
 - Extração da camada CURATED (SQL Server)
 
 - Geração de arquivos CSV particionados por dia
@@ -106,7 +105,6 @@ RAW → CURATED → GOLD → CSV → MinIO → BRONZE → SILVER → GOLD
 ├── README.md
 |
 ├── Documentação/
-│   ├── arquitetura-geral.md
 │   ├── on-premises.md
 │   ├── cloud.md
 │   ├── pipelines.md
@@ -115,10 +113,10 @@ RAW → CURATED → GOLD → CSV → MinIO → BRONZE → SILVER → GOLD
 │   ├── snap7_reader/
 │   ├── dags/
 |
-├── Imagens/
-│   ├── arquitetura_hibrida.png
-│   ├── arquitetura_onprem.png
-│   ├── arquitetura_cloud.png
+├── imagens/
+│   ├── arquitetura_hibrida.jpg
+│   ├── arquitetura_onprem.jpg
+│   ├── arquitetura_cloud.jpg
 ```
 ---
 
