@@ -8,7 +8,7 @@ Esta camada é responsável pela integração dos dados tratados no ambiente On-
 
 ## 📊 Diagrama da Arquitetura Cloud
 
-![Arquitetura Cloud](..imagens/arquitetura_cloud.png)
+![Arquitetura Cloud](../imagens/arquitetura_cloud.jpg)
 
 ---
 
