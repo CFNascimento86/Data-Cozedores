@@ -58,8 +58,6 @@ O projeto possui dois grandes grupos de pipelines:
 |   
 -> SQL Server CURATED
         ↓
-    CSV Diário
-        ↓
     MinIO Bucket
         ↓
     ADLS Bronze
@@ -105,15 +103,13 @@ Converter bytes para tipos reais
 Montar payload
     ↓
 Inserir no SQL Server RAW
-    ↓
-Registrar status da coleta
 ````
 ---
 
 ### 2. Camada RAW — SQL Server
 A camada RAW armazena os dados provenientes diretamente do snap7_reader.py.
 
-Objetivo
+#### Objetivo
 Preservar os dados originais coletados do processo industrial, garantindo rastreabilidade e possibilidade de reprocessamento.
 
 #### Características
@@ -155,3 +151,67 @@ Este pipeline trata os dados brutos da camada RAW e gera uma base confiável par
 | Validação de faixa   |	Identifica valores fora do limite operacional |
 | Normalização de tags |	Padroniza nomenclaturas                       |
 | Enriquecimento       |	Adiciona metadados de cozedor e área          |
+
+---
+
+### 4. Camada CURATED — SQL Server
+A camada CURATED contém dados tratados, padronizados e validados.
+
+#### Objetivo
+- Consumo operacional local
+- Cálculo de KPIs
+- Exportação para Cloud
+- Reprocessamentos controlados
+  
+#### Características
+- Dados confiáveis
+- Padronização de nomenclatura
+- Tipagem consistente
+- Identificação por equipamento
+- Particionamento lógico por data
+
+**Estrutura conceitual**
+|   Campo	 |            Descrição            |
+|------------|---------------------------------|
+| data       | Data usada para particionamento |
+| hora       | Horário especifico da medição   |
+| cozedor_id | Identificação do cozedor        |
+| variáveis	 | Colunas referentes ás variáveis |
+| valor      | Valores tratados e normalizados |
+| unidade	 | Unidades de engenharia          |
+| origem	 | ID de origem da leitura (RAW)   |
+
+---
+
+### 5. Pipeline CURATED → GOLD Operacional
+Este pipeline consolida os dados tratados em indicadores de apoio à produção.
+
+**DAG: ->** *etl_curated_to_gold*
+
+#### Responsabilidades
+- Ler dados da camada CURATED
+- Calcular KPIs operacionais
+- Agregar dados por período
+- Agregar dados por cozedor
+- Disponibilizar dados para dashboards locais
+- Registrar histórico de execução
+  
+|      Entrada       |      Saída      |
+|--------------------|-----------------|
+| SQL Server CURATED | SQL Server GOLD |
+
+**KPIs operacionais sugeridos**
+|          KPI	        |                Descrição                |
+|-----------------------|-----------------------------------------|
+| Eficiência do cozedor | Indicador de desempenho do equipamento  |
+| Consumo de vapor	    | Energia consumida no processo           |
+| Tempo de ciclo	    | Duração média do processo de cozimento  |
+| Pureza média          | Indicador de qualidade do caldo/produto |
+| Desvio operacional	| Tempo ou variáveis fora da faixa ideal  |
+
+**Exemplo de agregações**
+| Dimensão |          Agregação        |
+|----------|---------------------------|
+| Cozedor  | KPI por equipamento       |
+| Turno    | KPI por turno operacional |
+| Dia	   | KPI diário                |
