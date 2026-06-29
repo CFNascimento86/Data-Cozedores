@@ -215,3 +215,154 @@ Este pipeline consolida os dados tratados em indicadores de apoio à produção.
 | Cozedor  | KPI por equipamento       |
 | Turno    | KPI por turno operacional |
 | Dia	   | KPI diário                |
+
+---
+
+### 6. Pipeline CURATED → CSV Diário
+Este pipeline é o ponto de integração entre a camada On-Premises e a camada Cloud.
+
+**DAG: ->** *export_curated_to_minio*
+
+#### Objetivo
+Extrair dados particionados por dia da camada CURATED do SQL Server, gerar arquivos .CSV e armazená-los no MinIO.
+
+#### Responsabilidades
+- Consultar dados CURATED por data
+- Gerar arquivo CSV diário
+- Validar quantidade de registros exportados
+- Padronizar nome do arquivo
+- Armazenar o arquivo no bucket MinIO
+- Registrar log da exportação
+  
+|     Entrada        |     Saída    |
+|--------------------|--------------|
+| SQL Server CURATED | MinIO Bucket |
+
+**Estrutura no MinIO**
+````
+minio://cozedores-curated/
+ └── ano=2026/
+      └── mes=06/
+           └── cozedores_curated_2026-06-25.csv
+````
+
+---
+
+### 7. Pipeline MinIO → ADLS Bronze
+Este pipeline carrega os arquivos .CSV armazenados no MinIO para a camada BRONZE do Azure Data Lake Storage.
+
+**DAG: ->** *etl_minio_to_adls*
+
+#### Responsabilidades
+- Identificar arquivos disponíveis no MinIO
+- Validar integridade dos arquivos
+- Evitar reprocessamento duplicado
+- Carregar arquivos no ADLS Bronze
+- Registrar metadados da carga
+
+|   Entrada    |    Saída    |
+|--------------|-------------|
+| MinIO Bucket | ADLS Bronze |
+
+**Estrutura no ADLS Bronze**
+````
+adls://datalake/cozedores/bronze/
+ └── ano=2026/
+      └── mes=06/
+           └── cozedores_curated_2026-06-25.csv
+````
+
+---
+
+### 8. Pipeline Bronze → Silver
+A camada Silver representa os dados padronizados, limpos e enriquecidos para uso analítico.
+
+**DAG: ->** *etl_bronze_to_silver*
+
+#### Responsabilidades
+- Ler arquivos da camada Bronze
+- Converter CSV para formato analítico
+- Validar schema
+- Corrigir tipos de dados
+- Aplicar regras de qualidade
+- Padronizar nomes de colunas
+- Enriquecer com metadados
+- Salvar em formato Parquet
+  
+|   Entrada   |    Saída    |
+|-------------|-------------|
+| ADLS Bronze | ADLS Silver |
+
+**Estrutura no ADLS Silver**
+````
+adls://datalake/cozedores/silver/
+ └── ano=2026/
+      └── mes=06/
+           └── cozedores_2026-06-25.parquet
+````
+
+---
+
+### 9. Pipeline Silver → Gold
+A camada Gold consolida os dados em estruturas prontas para consumo estratégico.
+
+**DAG: ->** *etl_silver_to_gold*
+
+#### Responsabilidades
+- Ler dados tratados da camada Silver
+- Calcular KPIs estratégicos
+- Criar tabelas agregadas
+- Particionar dados por data e cozedor
+- Otimizar consumo pelo Power BI
+
+|  Entrada   |    Saída  |
+|------------|-----------|
+|ADLS Silver | ADLS Gold |
+
+**Datasets sugeridos** 
+|          Dataset	         |              Descrição             |
+|----------------------------|------------------------------------|
+| gold_kpis_cozedores_diario |	KPIs diários por cozedor          |
+| gold_kpis_cozedores_turno  |	KPIs por turno                    |
+| gold_consumo_vapor         |	Indicadores de consumo energético |
+| gold_eficiencia_processo   |	Eficiência consolidada            |
+| gold_pureza_caldo          |	Indicadores de qualidade          |
+
+**Estrutura no ADLS Gold**
+````
+adls://datalake/cozedores/gold/
+ └── ano=2026/
+      └── mes=06/
+           └── cozedores_2026-06-25.parquet
+````
+
+---
+
+### 10. Consumo pelo Power BI
+O Power BI consome os dados da camada Gold para geração dos dashboards estratégicos.
+
+#### Objetivos
+- Acompanhar performance dos cozedores
+- Comparar eficiência entre equipamentos
+- Avaliar consumo de vapor
+- Monitorar pureza
+- Visualizar tendências históricas
+- Apoiar decisões da gestão
+  
+**Visões sugeridas**
+|  Dashboard  |         	Descrição             |
+|-------------|-----------------------------------|
+| Visão Geral |	KPIs consolidados da operação     |
+| Eficiência  |	Comparativo por cozedor e período |
+| Vapor	      | Consumo energético consolidado    |
+| Qualidade   |	Pureza e estabilidade do processo |
+| Histórico   |	Tendências por safra e período    |
+
+---
+
+### 📌 Conclusão
+Os pipelines descritos neste documento conectam o chão de fábrica à camada estratégica de dados.
+
+A arquitetura permite que dados industriais dos cozedores sejam coletados, tratados, historizados e transformados em indicadores para operação e gestão.
+
+Com a combinação de snap7_reader, SQL Server, Apache Airflow, MinIO, ADLS e Power BI, o projeto implementa uma arquitetura híbrida robusta, rastreável e escalável para engenharia de dados industrial.
