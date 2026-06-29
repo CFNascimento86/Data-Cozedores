@@ -75,7 +75,7 @@ Indicadores estratégicos de performance industrial
 
 ## 🔄 Pipeline de Dados
 
-RAW → CURATED → GOLD → CSV → MinIO → BRONZE → SILVER → GOLD
+RAW → CURATED → GOLD → MinIO → BRONZE → SILVER → GOLD
 
 ---
 
