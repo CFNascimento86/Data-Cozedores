@@ -1,7 +1,7 @@
 ### 📘 Serviço Edge de Coleta de Dados Industriais (Snap7 → SQL Server)
 
 #### 🏭 Visão Geral
-O serviço Edge Cozedores é responsável por realizar a coleta contínua de dados dos 10 Cozedores da usina, conectados ao CLP Siemens S7‑315‑2 PN/DP via S7 Protocol (Snap7), e armazenar os dados brutos diretamente no SQL Server (camada RAW).
+O serviço Edge Cozedores é responsável por realizar a coleta contínua de dados dos 10 Cozedores da usina, conectados ao CLP Siemens S7‑315‑2 PN/DP via S7 Protocol (snap7), e armazenar os dados brutos diretamente no SQL Server (camada RAW).
 
 Ele roda em um ambiente Edge Computing, containerizado com Docker, garantindo:
 - baixa latência
@@ -11,6 +11,7 @@ Ele roda em um ambiente Edge Computing, containerizado com Docker, garantindo:
 - segurança
 - independência da rede corporativa
 
+---
 
 #### 🔌 Arquitetura do Serviço
 **ET 200M** → *Profibus DP* → **S7‑315-2 PN/DP** → *Profinet* → Snap7 Reader (Docker/Edge) → SQL Server (RAW)
@@ -24,6 +25,7 @@ O Edge executa:
 - reconexão automática
 - operação contínua 24/7
 
+---
 
 #### 📦 Componentes do Serviço:
 
@@ -36,6 +38,7 @@ Script principal que:
 - gera logs estruturados
 - grava no SQL Server
 
+
 **2. Dockerfile**
 
 Define o container do serviço Edge.
@@ -47,6 +50,7 @@ Orquestra:
 - o serviço Snap7 Reader
 - o SQL Server
 
+---
 
 #### 🧱 Estrutura dos DBs no CLP
 
@@ -64,6 +68,7 @@ Cada DB possui a seguinte estrutura (34 bytes):
 
  ![DataBlock](../imagens/DB_estrutura.jpg)
 
+---
 
 #### 🗄️ Modelagem RAW no SQL Server
 
@@ -87,6 +92,8 @@ raw_cozedores (
 )
 ````
 
+---
+
 #### 📊 Logs Estruturados (JSON)
 Todos os logs seguem o formato:
 ````
@@ -105,6 +112,7 @@ Benefícios:
 - rastreabilidade total
 - auditoria industrial
 
+---
 
 #### 🔄 Reconexão Automática
 O serviço:
@@ -113,6 +121,7 @@ O serviço:
 - registra falhas em JSON
 - nunca interrompe o ciclo de coleta
 
+---
 
 #### 🛡️ Boas Práticas de Produção
 - rodar o Edge em hardware industrial (IPC, gateway Rugged)
@@ -121,6 +130,7 @@ O serviço:
 - logs enviados para servidor central
 - Airflow orquestrando ETLs
 
+---
 
 #### 🏁 Conclusão:
 O serviço Edge é o coração da coleta de dados industriais dos Cozedores.
