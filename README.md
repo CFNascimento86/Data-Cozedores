@@ -21,7 +21,7 @@ Os dados são coletados diretamente dos instrumentos de campo dos cozedores, pro
 ## 🏭 Camada On-Premises (Operacional)
 Responsável pela aquisição, tratamento inicial e disponibilização dos dados para operação.
 
-**Fluxo:**
+*Fluxo:*
 
 - Transmissores de campo (pressão, temperatura, nível, ...)
 
@@ -50,7 +50,7 @@ Garantir suporte operacional à produção com dados confiáveis e estruturados.
 
 Responsável pela consolidação, historização e análise estratégica dos dados.
 
-**Fluxo:**
+*Fluxo:*
 - Extração da camada CURATED (SQL Server)
 
 - Geração de arquivos CSV particionados por dia
@@ -103,6 +103,12 @@ RAW → CURATED → GOLD → MinIO → BRONZE → SILVER → GOLD
 ## 📁 Estrutura do Projeto
 ```
 ├── README.md
+|
+├── Automação/
+│   ├── Arquitetura.md
+│   ├── Camada Edge.md
+│   ├── CLP.md
+|   ├── DBs.md
 |
 ├── Documentação/
 │   ├── on-premises.md
