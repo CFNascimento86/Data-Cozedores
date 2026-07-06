@@ -108,13 +108,13 @@ RAW → CURATED → GOLD → MinIO → BRONZE → SILVER → GOLD
 │   ├── Arquitetura.md
 │   ├── Camada Edge.md
 │   ├── CLP.md
-|   ├── DBs.md
+|   └── DBs.md
 |
 ├── Documentação/
 │   ├── on-premises.md
 │   ├── cloud.md
 │   ├── pipelines.md
-|   ├── data-model.md
+|   └── data-model.md
 │
 ├── Scripts/
 │   ├── snap7_reader/
@@ -123,12 +123,21 @@ RAW → CURATED → GOLD → MinIO → BRONZE → SILVER → GOLD
 |   |   ├── requirements.txt
 │   |   └── snap7_reader.py
 |   |
-│   ├── dags/
-|
+│   ├── ETLs/
+|   |   ├── docker-compose.yml
+|   |   ├── Dockerfile
+|   |   └── dags
+|   |       ├── etl_raw_to_curated.py
+|   |       ├── etl_curated_to_gold.py
+|   |       ├── export_curated_to_minio.py
+|   |       ├── etl_minio_to_adls.py
+|   |       ├── etl_bronze_to_silver.py
+|   |       └── etl_silver_to_gold.py
+|   |
 ├── imagens/
 │   ├── arquitetura_hibrida.jpg
 │   ├── arquitetura_onprem.jpg
-│   ├── arquitetura_cloud.jpg
+│   └── arquitetura_cloud.jpg
 ```
 ---
 
