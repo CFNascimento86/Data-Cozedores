@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+
+  snap7_reader:
+    build: .
+    container_name: snap7_reader
+    environment:
+      - PLC_IP=192.168.0.10
+      - PLC_RACK=0
+      - PLC_SLOT=2
+      - SQLSERVER_HOST=DESKTOP-9PICUGC\\SQLEXPRESS
+      - SQLSERVER_DB=Cozedores
+      - SQLSERVER_USER=LadrilhandoData
+      - SQLSERVER_PWD=*********
+    depends_on:
+      - sqlserver
+    restart: always
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sqlserver
+    environment:
+      SA_PASSWORD: "**********"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
