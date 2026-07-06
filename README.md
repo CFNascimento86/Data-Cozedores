@@ -114,9 +114,15 @@ RAW → CURATED → GOLD → MinIO → BRONZE → SILVER → GOLD
 │   ├── on-premises.md
 │   ├── cloud.md
 │   ├── pipelines.md
+|   ├── data-model.md
 │
 ├── Scripts/
 │   ├── snap7_reader/
+|   |   ├── docker-compose.yml
+|   |   ├── Dockerfile
+|   |   ├── requirements.txt
+│   |   └── snap7_reader.py
+|   |
 │   ├── dags/
 |
 ├── imagens/
