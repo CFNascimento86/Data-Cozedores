@@ -182,3 +182,88 @@ CREATE TABLE dbo.gold_kpi_cozedores_turno (
 | data_processamento  | DATETIME2 | Data referente ao último processamento da camada gold |
 
 ---
+
+#### 4. Camada Bronze — ADLS
+Primeira camada da arquitetura Cloud.
+
+#### *📌 Características*
+- Dados em formato CSV
+- Estrutura próxima à origem
+- Particionamento por data
+
+#### *📁 Estrutura*
+````
+bronze/
+└── ano=YYYY/
+    └── mes=MM/
+        └── cozedores_curated_YYYY-MM-DD.csv
+````
+#### *📄 Schema lógico (CSV)*
+Segue identico a mesma estrutura da camada CURATED do SQL Server
+
+----
+
+#### 5. Camada Silver — ADLS
+Camada de dados tratados e padronizados.
+
+#### *📌 Características*
+- Dados limpos
+- Tipagem consistente
+- Formato Parquet
+- Otimizado para leitura analítica
+  
+#### *📁 Estrutura*
+````
+silver/
+└── cozedor=**/
+	└── ano=YYYY/
+	    └── mes=MM/
+	        └── dia=DD/
+            	└── part-0001.parquet
+````
+
+#### *📄 Schema lógico (Parquet)*
+Segue identico a mesma estrutura da camada Bronze, exceto pela subtração da coluna "data", já que o mesmo está particionado segundo essa premissa.
+
+---
+
+#### 6. Camada Gold — ADLS (Estratégica)
+Camada final para consumo analítico.
+
+#### *📌 Características*
+- Dados agregados
+- Modelagem orientada a negócio
+- Alta performance para BI
+
+#### *📁 Estrutura*
+````
+gold/
+└── dataset=cozedores_kpis/
+    └── ano=YYYY/
+        └── mes=MM/
+            └── dia=DD/
+                └── part-0001.parquet
+````
+#### *📄 Schema lógico (Sugerido)*
+| Campo	              | Tipo   |    Descrição     |
+|---------------------|--------|------------------|
+| data_referencia	  | DATE   | Data do KPI      |
+| cozedor_id          |	INT	   | Identificador    |
+| eficiencia_media    | DOUBLE | Eficiência média |
+| consumo_vapor_total |	DOUBLE | Consumo total    |
+| pureza_media	      | DOUBLE |  Pureza média    |
+| tempo_ciclo_medio   |	DOUBLE | Tempo médio      |
+| qtd_registros       |	INT	   | Volume de dados  |
+
+---
+
+#### 📌 Conclusão
+O modelo de dados do projeto garante que os dados industriais dos cozedores evoluam de sinais brutos para ativos analíticos estruturados.
+A separação em camadas (RAW, CURATED, GOLD e Medallion) permite:
+- Escalabilidade
+- Reprocessamento
+- Governança
+- Performance
+- Clareza arquitetural
+  
+Transformando dados operacionais em inteligência estratégica.
