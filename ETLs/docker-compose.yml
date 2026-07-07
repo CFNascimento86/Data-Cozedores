@@ -1,0 +1,139 @@
+version: "3.9"
+
+services:
+  # ---------------------------------------------------
+  # POSTGRES – Banco de metadados do Airflow
+  # ---------------------------------------------------
+  postgres:
+    image: postgres:15
+    container_name: airflow_postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      retries: 10
+    restart: always
+
+  # ---------------------------------------------------
+  # AIRFLOW INIT – Inicializa DB + cria usuário admin
+  # ---------------------------------------------------
+  airflow-init:
+    build: .
+    container_name: airflow_init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: "z5i6L011OP1zE26_QIxhsWdZLjcqte4kvroqcoR1Fxs="
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: >
+      bash -c "
+      airflow db init &&
+      airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com
+      "
+    restart: "no"
+
+  # ---------------------------------------------------
+  # AIRFLOW WEBSERVER
+  # ---------------------------------------------------
+  airflow-webserver:
+    build: .
+    container_name: airflow_webserver
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__WEBSERVER__RBAC: "true"
+      AIRFLOW__CORE__FERNET_KEY: "z5i6L011OP1zE26_QIxhsWdZLjcqte4kvroqcoR1Fxs="
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    ports:
+      - "8080:8080"
+    command: webserver
+    restart: always
+
+  # ---------------------------------------------------
+  # AIRFLOW SCHEDULER
+  # ---------------------------------------------------
+  airflow-scheduler:
+    build: .
+    container_name: airflow_scheduler
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: "z5i6L011OP1zE26_QIxhsWdZLjcqte4kvroqcoR1Fxs="
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: scheduler
+    restart: always
+
+  # ---------------------------------------------------
+  # AIRFLOW TRIGGERER
+  # ---------------------------------------------------
+  airflow-triggerer:
+    build: .
+    container_name: airflow_triggerer
+    depends_on:
+      postgres:
+        condition: service_healthy
+      airflow-init:
+        condition: service_completed_successfully
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: "z5i6L011OP1zE26_QIxhsWdZLjcqte4kvroqcoR1Fxs="
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    command: triggerer
+    restart: always
+
+  # ---------------------------------------------------
+  # MINIO – Data Lake local
+  # ---------------------------------------------------
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"   # API S3
+      - "9001:9001"   # Console
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: ********
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: always
+
+# ---------------------------------------------------
+# VOLUMES
+# ---------------------------------------------------
+volumes:
+  postgres_data:
+  minio_data:
