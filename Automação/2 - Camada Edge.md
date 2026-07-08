@@ -139,7 +139,7 @@ Ele garante:
 - rastreabilidade
 - segurança
 - escalabilidade
-- integração TO/TI real
+- integração TO/TI
 
 E serve como base para:
 - ETLs (Airflow)
