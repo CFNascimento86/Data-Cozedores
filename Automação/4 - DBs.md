@@ -30,19 +30,17 @@ Aqui está o modelo recomendado:
 ````
 STRUCT
     Temperatura          : REAL;   // °C
-    Pressao\Vacuo         : REAL;   // kPa ou mmHg
+    Pressao\Vacuo        : REAL;   // kPa ou mmHg
     Brix                 : REAL;   // %
     Nivel                : REAL;   // %
-    Vazao_Vapor           : REAL;   // t/h ou kg/h
-    Vazao_Alimentacao     : REAL;   // t/h
-    Estado_Batelada       : INT;    // 0=Parado, 1=Carregando, 2=Cozendo, 3=Descarga
+    Vazao_Vapor          : REAL;   // t/h ou kg/h
+    Vazao_Alimentacao    : REAL;   // t/h
+    Estado_Batelada      : INT;    // 0=Parado, 1=Carregando, 2=Cozendo, 3=Descarga
     Pureza               : REAL;   // %
     Condensado           : REAL;   // °C ou kg/h
 END_STRUCT
 ````
 Total: 34 bytes por DB
-
-Isso é perfeito para Snap7.
 
 ---
 
