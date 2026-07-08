@@ -81,7 +81,7 @@ RAW → CURATED → GOLD → MinIO → BRONZE → SILVER → GOLD
 
 ## ⚙️ Tecnologias Utilizadas
 
-- CLP Siemens S7-315 PN/DP (Automação Industrial)
+- CLP Siemens S7-315-2 PN/DP (Automação Industrial)
 
 - Profibus / Profinet
 
