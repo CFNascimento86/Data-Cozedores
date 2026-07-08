@@ -117,23 +117,22 @@ RAW → CURATED → GOLD → MinIO → BRONZE → SILVER → GOLD
 |   └── data-model.md
 │
 ├── Scripts/
-│   ├── snap7_reader/
-|   |   ├── docker-compose.yml
-|   |   ├── Dockerfile
-|   |   ├── requirements.txt
-│   |   └── snap7_reader.py
-|   |
-│   ├── ETLs/
-|   |   ├── docker-compose.yml
-|   |   ├── Dockerfile
-|   |   └── dags
-|   |       ├── etl_raw_to_curated.py
-|   |       ├── etl_curated_to_gold.py
-|   |       ├── export_curated_to_minio.py
-|   |       ├── etl_minio_to_adls.py
-|   |       ├── etl_bronze_to_silver.py
-|   |       └── etl_silver_to_gold.py
-|   |
+│   ├── docker-compose.yml
+|   ├── Dockerfile
+|   ├── requirements.txt
+│   └── snap7_reader.py
+|   
+├── ETLs/
+|   ├── docker-compose.yml
+|   ├── Dockerfile
+|   └── dags
+|       ├── etl_raw_to_curated.py
+|       ├── etl_curated_to_gold.py
+|       ├── export_curated_to_minio.py
+|       ├── etl_minio_to_adls.py
+|       ├── etl_bronze_to_silver.py
+|       └── etl_silver_to_gold.py
+|   
 ├── imagens/
 │   ├── arquitetura_hibrida.jpg
 │   ├── arquitetura_onprem.jpg
