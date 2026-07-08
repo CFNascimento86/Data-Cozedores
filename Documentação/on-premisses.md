@@ -79,7 +79,7 @@ O **Controlador Lógico Programável (CLP)** é o núcleo de processamento da au
 
 ## 🖥️ 2. Camada Edge Computing
 
-### 2.1 Edge Node (Mini PC Industrial / Gateway)
+### 2.1 Edge Node (PC Industrial / Gateway)
 
 O **Edge Node** é o ponto de tradução entre o mundo OT (automação) e o mundo IT (dados).
 
