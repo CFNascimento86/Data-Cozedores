@@ -105,8 +105,7 @@ A primeira etapa da integração Cloud é realizada por uma DAG no Apache Airflo
 minio://cozedores-curated/
 └── ano=2026/
     └── mes=06/
-        └── dia=24/
-            └── cozedores_curated_2026-06-24.csv
+        └── cozedores_curated_2026-06-24.csv
 ````
 #### Essa organização facilita:
 - Reprocessamento por data
